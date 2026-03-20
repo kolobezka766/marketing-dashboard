@@ -8,13 +8,7 @@
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            zinc: { 950: '#09090b' }
-          }
-        }
-      }
+      theme: { extend: { colors: { zinc: { 950: '#09090b' } } } }
     }
   </script>
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -38,7 +32,7 @@
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
+// ─── Mock data (fallback) ──────────────────────────────────────────────────────
 const MOCK_ROWS = [
   { client:"Pizzeria Roma",       channel:"meta",   ad_name:"Rozvoz pizzy Praha 7 – video",    impressions:42000, clicks:1890, leads:134, purchases:89, spend:4200, daily_budget:600 },
   { client:"Pizzeria Roma",       channel:"meta",   ad_name:"Rozvoz pizzy Praha 7 – statika",  impressions:18000, clicks:612,  leads:41,  purchases:29, spend:1800, daily_budget:300 },
@@ -96,6 +90,28 @@ function cardBorder(status) {
     : "border-red-500/30 bg-red-500/5";
 }
 
+// ─── Data parsing ─────────────────────────────────────────────────────────────
+function parseJsonRows(json) {
+  const getAct = (actions, ...types) => {
+    for (const t of types) {
+      const f = (actions||[]).find(a => a.action_type === t);
+      if (f) return parseFloat(f.value) || 0;
+    }
+    return 0;
+  };
+  return (json.data || []).map(ad => ({
+    client:      json.account || "Klient",
+    channel:     "meta",
+    ad_name:     ad.ad_name || ad.adset_name || "–",
+    impressions: parseFloat(ad.impressions) || 0,
+    clicks:      parseFloat(ad.clicks)      || 0,
+    leads:       getAct(ad.actions, "lead", "offsite_conversion.fb_pixel_lead", "onsite_conversion.lead_grouped"),
+    purchases:   getAct(ad.actions, "purchase", "offsite_conversion.fb_pixel_purchase"),
+    spend:       parseFloat(ad.spend)       || 0,
+    daily_budget: 0,
+  }));
+}
+
 function calcStatus(ctr, cpl, cpp, leads, purchases, spendVal, t) {
   if (spendVal > 0 && leads === 0 && purchases === 0) return "critical";
   if (ctr < t.minCTR * 0.5) return "critical";
@@ -138,7 +154,6 @@ function buildClients(rows) {
     const avgCPL = totalLeads>0 ? totalSpend/totalLeads : 0;
     const avgCPP = totalPurch>0 ? totalSpend/totalPurch : 0;
 
-    // per channel
     const chMap = {};
     cams.forEach(c => { if(!chMap[c.channel]) chMap[c.channel]=[]; chMap[c.channel].push(c); });
     const channels = Object.entries(chMap).map(([ch, cs]) => {
@@ -164,12 +179,141 @@ function buildClients(rows) {
 
     const status = calcStatus(avgCTR,avgCPL,avgCPP,totalLeads,totalPurch,totalSpend,THRESHOLDS);
     return { id:name, name, campaigns:cams, channels, status, reasons,
-             totalSpend, totalLeads, totalPurch, totalBudget,
+             totalSpend, totalLeads, totalPurch, totalBudget, totalImp, totalClk,
              avgCTR, avgCPM, avgCPC, avgCPL, avgCPP };
   }).sort((a,b)=>({critical:0,warning:1,good:2}[a.status]-{critical:0,warning:1,good:2}[b.status]));
 }
 
-// ─── Channel Spend Chart ───────────────────────────────────────────────────────
+// ─── Trend helpers ────────────────────────────────────────────────────────────
+// Compute prev-period = 14d totals minus 7d totals (= days 7-14 ago)
+function buildPrevMap(clients7d, clients14d) {
+  const map = {};
+  clients14d.forEach(c14 => {
+    const c7 = clients7d.find(c => c.name === c14.name);
+    if (!c7) return;
+    const sp  = c14.totalSpend  - c7.totalSpend;
+    const ld  = c14.totalLeads  - c7.totalLeads;
+    const pu  = c14.totalPurch  - c7.totalPurch;
+    const imp = c14.totalImp    - c7.totalImp;
+    const clk = c14.totalClk    - c7.totalClk;
+    map[c14.name] = {
+      totalSpend: sp,
+      totalLeads: ld,
+      totalPurch: pu,
+      avgCTR:  imp > 0 ? (clk / imp) * 100 : null,
+      avgCPL:  ld  > 0 ? sp / ld : null,
+      avgCPP:  pu  > 0 ? sp / pu : null,
+    };
+  });
+  return map;
+}
+
+// ─── TrendBadge ───────────────────────────────────────────────────────────────
+function TrendBadge({ current, prev, lowerIsBetter = false }) {
+  if (prev === null || prev === undefined || prev === 0) return null;
+  if (!isFinite(current) || !isFinite(prev)) return null;
+  const delta = (current - prev) / Math.abs(prev);
+  const pct   = Math.abs(delta) * 100;
+  if (pct < 1) return null;
+  const isUp   = delta > 0;
+  const isGood = lowerIsBetter ? !isUp : isUp;
+  return (
+    <span className={`text-[10px] font-semibold ${isGood ? "text-emerald-400" : "text-red-400"}`}>
+      {isUp ? "↑" : "↓"}{n(pct, 0)}%
+    </span>
+  );
+}
+
+// ─── Mini metric bar chart ────────────────────────────────────────────────────
+function MiniMetricChart({ title, items, barColor, formatVal, getStatus }) {
+  if (!items || items.length === 0) return null;
+  const max = Math.max(...items.map(i => i.value), 0.001);
+  return (
+    <div className="flex-1 min-w-0 space-y-1.5">
+      <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">{title}</p>
+      {items.map((item, i) => {
+        const pct    = (item.value / max) * 100;
+        const status = getStatus ? getStatus(item.value) : "good";
+        const color  = status === "critical" ? "#f87171" : status === "warning" ? "#f59e0b" : barColor;
+        return (
+          <div key={i} className="flex items-center gap-2 min-w-0">
+            <span className="text-[10px] text-zinc-500 w-20 flex-shrink-0 truncate" title={item.label}>
+              {item.label.length > 14 ? item.label.substring(0, 13) + "…" : item.label}
+            </span>
+            <div className="flex-1 h-3 bg-zinc-800 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full bar-fill"
+                style={{ width: `${pct}%`, background: color, opacity: 0.8 }}
+              />
+            </div>
+            <span className={`text-[10px] font-medium w-16 text-right flex-shrink-0 ${
+              status === "critical" ? "text-red-400" : status === "warning" ? "text-amber-400" : "text-zinc-400"
+            }`}>{formatVal(item.value)}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Channel chart (shown in expanded channel section) ────────────────────────
+function ChannelChart({ ch }) {
+  const ads      = ch.campaigns;
+  const hasPurch = ads.some(c => c.purchases > 0);
+  const hasLead  = ads.some(c => c.leads > 0);
+  const hasConv  = hasPurch || hasLead;
+  const convLabel = hasPurch ? "CPP (cena/nákup)" : "CPL (cena/lead)";
+  const cfg = CH[ch.channel];
+
+  const spendItems = ads.map(c => ({ label: c.adName, value: c.spend }));
+
+  const ctrItems = ads.map(c => ({ label: c.adName, value: c.ctr }));
+
+  const convItems = hasConv
+    ? ads
+        .map(c => ({ label: c.adName, value: hasPurch ? c.cpp : c.cpl }))
+        .filter(i => i.value > 0)
+    : [];
+
+  return (
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 mt-2 mb-3">
+      <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium mb-3">Výkon reklam</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <MiniMetricChart
+          title="Spend"
+          items={spendItems}
+          barColor={cfg.bar}
+          formatVal={v => v > 0 ? spend(v) : "—"}
+        />
+        <MiniMetricChart
+          title="CTR"
+          items={ctrItems}
+          barColor="#10b981"
+          formatVal={v => `${n(v, 2)}%`}
+          getStatus={v =>
+            v < THRESHOLDS.minCTR * 0.5 ? "critical"
+            : v < THRESHOLDS.minCTR     ? "warning"
+            : "good"
+          }
+        />
+        {convItems.length > 0 && (
+          <MiniMetricChart
+            title={convLabel}
+            items={convItems}
+            barColor="#10b981"
+            formatVal={v => v > 0 ? kc(v) : "—"}
+            getStatus={v => {
+              const max = hasPurch ? THRESHOLDS.maxCPP : THRESHOLDS.maxCPL;
+              return v > max * 1.5 ? "critical" : v > max ? "warning" : "good";
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── ChannelSpendChart (header summary) ──────────────────────────────────────
 function ChannelSpendChart({ clients }) {
   const chTotals = useMemo(() => {
     const t = { google:0, meta:0, tiktok:0 };
@@ -180,13 +324,11 @@ function ChannelSpendChart({ clients }) {
   const total = Object.values(chTotals).reduce((a,b)=>a+b,0);
   if (total === 0) return null;
 
-  const channels = ["meta","google","tiktok"];
-
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 space-y-3">
       <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">Spend podle kanálu</p>
       <div className="space-y-2.5">
-        {channels.map(ch => {
+        {["meta","google","tiktok"].map(ch => {
           const val = chTotals[ch] || 0;
           const pct = total > 0 ? (val / total) * 100 : 0;
           const cfg = CH[ch];
@@ -194,10 +336,7 @@ function ChannelSpendChart({ clients }) {
             <div key={ch} className="flex items-center gap-3">
               <span className={`text-xs font-semibold w-14 flex-shrink-0 ${cfg.text}`}>{cfg.label}</span>
               <div className="flex-1 h-5 bg-zinc-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full bar-fill"
-                  style={{ width:`${pct}%`, background: cfg.bar, opacity: 0.75 }}
-                />
+                <div className="h-full rounded-full bar-fill" style={{ width:`${pct}%`, background: cfg.bar, opacity: 0.75 }} />
               </div>
               <span className="text-xs text-zinc-400 w-20 text-right flex-shrink-0">{spend(val)}</span>
               <span className="text-[10px] text-zinc-600 w-8 text-right flex-shrink-0">{n(pct,0)}%</span>
@@ -210,11 +349,14 @@ function ChannelSpendChart({ clients }) {
 }
 
 // ─── Components ───────────────────────────────────────────────────────────────
-function Kpi({label, value, status, sub}) {
+function Kpi({ label, value, status, sub, trend }) {
   return (
     <div className="flex flex-col gap-0.5 min-w-0">
       <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium whitespace-nowrap">{label}</span>
-      <span className={`text-sm font-bold whitespace-nowrap ${status ? clr(status) : "text-zinc-100"}`}>{value}</span>
+      <div className="flex items-center gap-1.5">
+        <span className={`text-sm font-bold whitespace-nowrap ${status ? clr(status) : "text-zinc-100"}`}>{value}</span>
+        {trend}
+      </div>
       {sub && <span className="text-[10px] text-zinc-600 whitespace-nowrap">{sub}</span>}
     </div>
   );
@@ -327,7 +469,6 @@ function ChannelSection({ch, thresholds}) {
   const cfg = CH[ch.channel];
   return (
     <div className="space-y-2.5">
-      {/* Channel header */}
       <div className="flex items-center gap-2 flex-wrap">
         <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
           {ch.channel[0].toUpperCase()}
@@ -348,13 +489,15 @@ function ChannelSection({ch, thresholds}) {
                status={ch.cpp>thresholds.maxCPP?(ch.cpp>thresholds.maxCPP*1.5?"critical":"warning"):"good"} />}
         </div>
       </div>
+      {/* Chart */}
+      <ChannelChart ch={ch} />
       {/* Ad table */}
       <AdTable campaigns={ch.campaigns} thresholds={thresholds} />
     </div>
   );
 }
 
-function ClientCard({client, channelFilter}) {
+function ClientCard({client, channelFilter, prevData}) {
   const [open, setOpen] = useState(false);
 
   const visibleChannels = channelFilter === "all"
@@ -362,6 +505,11 @@ function ClientCard({client, channelFilter}) {
     : client.channels.filter(ch => ch.channel === channelFilter);
 
   if (channelFilter !== "all" && visibleChannels.length === 0) return null;
+
+  // trend indicators (only for 7d when prevData is available)
+  const p = prevData ? prevData[client.name] : null;
+  const hasPurch = client.totalPurch > 0;
+  const hasLead  = client.totalLeads > 0;
 
   return (
     <div className={`rounded-xl border transition-all duration-200 ${cardBorder(client.status)}`}>
@@ -374,6 +522,9 @@ function ClientCard({client, channelFilter}) {
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-bold text-zinc-100 text-base leading-tight">{client.name}</h3>
             <StatusBadge status={client.status} />
+            {p && (
+              <span className="text-[10px] text-zinc-600 ml-1">vs. předchozí 7d</span>
+            )}
           </div>
           <div className="flex gap-1.5 mt-1.5 flex-wrap">
             {client.channels.map(ch => <ChBadge key={ch.channel} channel={ch.channel} />)}
@@ -388,31 +539,39 @@ function ClientCard({client, channelFilter}) {
         </div>
         {/* KPIs */}
         <div className="hidden lg:flex gap-5 flex-shrink-0 items-start">
-          <Kpi label="Spend"      value={spend(client.totalSpend)} />
+          <Kpi label="Spend" value={spend(client.totalSpend)}
+            trend={p ? <TrendBadge current={client.totalSpend} prev={p.totalSpend} lowerIsBetter /> : null} />
           <Kpi label="Budget/den" value={spend(client.totalBudget)} />
-          <Kpi label="CTR"        value={`${n(client.avgCTR,2)}%`}
-               status={client.avgCTR<THRESHOLDS.minCTR?(client.avgCTR<THRESHOLDS.minCTR*0.5?"critical":"warning"):"good"} />
-          <Kpi label="CPM"        value={kc(client.avgCPM)} />
-          <Kpi label="CPC"        value={kc(client.avgCPC)} />
-          {client.totalLeads>0 && <Kpi label="CPL" value={kc(client.avgCPL)}
+          <Kpi label="CTR" value={`${n(client.avgCTR,2)}%`}
+               status={client.avgCTR<THRESHOLDS.minCTR?(client.avgCTR<THRESHOLDS.minCTR*0.5?"critical":"warning"):"good"}
+               trend={p && p.avgCTR !== null ? <TrendBadge current={client.avgCTR} prev={p.avgCTR} /> : null} />
+          <Kpi label="CPM" value={kc(client.avgCPM)} />
+          <Kpi label="CPC" value={kc(client.avgCPC)} />
+          {hasLead && <Kpi label="CPL" value={kc(client.avgCPL)}
                status={client.avgCPL>THRESHOLDS.maxCPL?(client.avgCPL>THRESHOLDS.maxCPL*1.5?"critical":"warning"):"good"}
-               sub={`${client.totalLeads} leadů`} />}
-          {client.totalPurch>0 && <Kpi label="CPP" value={kc(client.avgCPP)}
+               sub={`${client.totalLeads} leadů`}
+               trend={p && p.avgCPL !== null ? <TrendBadge current={client.avgCPL} prev={p.avgCPL} lowerIsBetter /> : null} />}
+          {hasPurch && <Kpi label="CPP" value={kc(client.avgCPP)}
                status={client.avgCPP>THRESHOLDS.maxCPP?(client.avgCPP>THRESHOLDS.maxCPP*1.5?"critical":"warning"):"good"}
-               sub={`${client.totalPurch} nákupů`} />}
+               sub={`${client.totalPurch} nákupů`}
+               trend={p && p.avgCPP !== null ? <TrendBadge current={client.avgCPP} prev={p.avgCPP} lowerIsBetter /> : null} />}
         </div>
         <span className={`flex-shrink-0 text-zinc-500 mt-1 transition-transform duration-200 text-lg ${open?"rotate-180":""}`}>⌄</span>
       </button>
 
       {/* Mobile KPIs */}
       <div className="lg:hidden px-4 pb-3 flex flex-wrap gap-4">
-        <Kpi label="Spend"  value={spend(client.totalSpend)} />
-        <Kpi label="CTR"    value={`${n(client.avgCTR,2)}%`}
-             status={client.avgCTR<THRESHOLDS.minCTR?"warning":"good"} />
-        <Kpi label="CPC"    value={kc(client.avgCPC)} />
-        <Kpi label="CPM"    value={kc(client.avgCPM)} />
-        {client.totalLeads>0   && <Kpi label="CPL" value={kc(client.avgCPL)} sub={`${client.totalLeads} leadů`} />}
-        {client.totalPurch>0   && <Kpi label="CPP" value={kc(client.avgCPP)} sub={`${client.totalPurch} nákupů`} />}
+        <Kpi label="Spend" value={spend(client.totalSpend)}
+          trend={p ? <TrendBadge current={client.totalSpend} prev={p.totalSpend} lowerIsBetter /> : null} />
+        <Kpi label="CTR" value={`${n(client.avgCTR,2)}%`}
+             status={client.avgCTR<THRESHOLDS.minCTR?"warning":"good"}
+             trend={p && p.avgCTR !== null ? <TrendBadge current={client.avgCTR} prev={p.avgCTR} /> : null} />
+        <Kpi label="CPC" value={kc(client.avgCPC)} />
+        <Kpi label="CPM" value={kc(client.avgCPM)} />
+        {hasLead  && <Kpi label="CPL" value={kc(client.avgCPL)} sub={`${client.totalLeads} leadů`}
+          trend={p && p.avgCPL !== null ? <TrendBadge current={client.avgCPL} prev={p.avgCPL} lowerIsBetter /> : null} />}
+        {hasPurch && <Kpi label="CPP" value={kc(client.avgCPP)} sub={`${client.totalPurch} nákupů`}
+          trend={p && p.avgCPP !== null ? <TrendBadge current={client.avgCPP} prev={p.avgCPP} lowerIsBetter /> : null} />}
       </div>
 
       {/* Expanded detail */}
@@ -521,7 +680,6 @@ function CsvImport({onImport}) {
   );
 }
 
-// ─── Sort options ─────────────────────────────────────────────────────────────
 const SORT_OPTIONS = [
   { id:"status",  label:"Status" },
   { id:"spend",   label:"Spend ↓" },
@@ -531,19 +689,24 @@ const SORT_OPTIONS = [
 
 function sortClients(clients, sortBy) {
   return [...clients].sort((a, b) => {
-    if (sortBy === "status") {
-      return ({critical:0,warning:1,good:2}[a.status] - {critical:0,warning:1,good:2}[b.status]);
-    }
+    if (sortBy === "status") return ({critical:0,warning:1,good:2}[a.status] - {critical:0,warning:1,good:2}[b.status]);
     if (sortBy === "spend")  return b.totalSpend - a.totalSpend;
-    if (sortBy === "ctr")    return a.avgCTR - b.avgCTR;   // ascending — worst first
+    if (sortBy === "ctr")    return a.avgCTR - b.avgCTR;
     if (sortBy === "name")   return a.name.localeCompare(b.name, "cs");
     return 0;
   });
 }
 
+const PERIODS = [
+  { id:"7d",  label:"7 dní" },
+  { id:"14d", label:"14 dní" },
+  { id:"30d", label:"30 dní" },
+];
+
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard() {
   const [clients, setClients]       = useState([]);
+  const [prevMap, setPrevMap]       = useState(null);   // trend data (only for 7d)
   const [view, setView]             = useState("all");
   const [channelFilter, setChannel] = useState("all");
   const [search, setSearch]         = useState("");
@@ -551,46 +714,62 @@ function Dashboard() {
   const [showImport, setShow]       = useState(false);
   const [updated, setUpdated]       = useState("");
   const [period, setPeriod]         = useState("");
+  const [activePeriod, setActivePeriod] = useState("30d");
+  const [loading, setLoading]       = useState(false);
 
-  function load(rows) {
+  function loadFallback(rows) {
     setClients(buildClients(rows));
     setUpdated(new Date().toLocaleString("cs-CZ"));
+    setPeriod("Demo data");
+    setPrevMap(null);
     setShow(false);
   }
 
-  useEffect(()=>{
-    fetch("data/zidlestoly.json")
-      .then(r => r.json())
-      .then(json => {
-        const getAct = (actions, ...types) => {
-          for (const t of types) {
-            const f = (actions||[]).find(a => a.action_type === t);
-            if (f) return parseFloat(f.value) || 0;
-          }
-          return 0;
-        };
-        const rows = (json.data || []).map(ad => ({
-          client:      json.account || "Klient",
-          channel:     "meta",
-          ad_name:     ad.ad_name || ad.adset_name || "–",
-          impressions: parseFloat(ad.impressions) || 0,
-          clicks:      parseFloat(ad.clicks)      || 0,
-          leads:       getAct(ad.actions, "lead", "offsite_conversion.fb_pixel_lead", "onsite_conversion.lead_grouped"),
-          purchases:   getAct(ad.actions, "purchase", "offsite_conversion.fb_pixel_purchase"),
-          spend:       parseFloat(ad.spend)       || 0,
-          daily_budget: 0,
-        }));
-        setClients(buildClients(rows));
-        const p = json.period || {};
-        if (p.since && p.until) setPeriod(`${p.since} – ${p.until}`);
-        setUpdated(`Aktualizováno ${(json.fetched_at||"").substring(0,10)}`);
-      })
-      .catch(()=>{ load(MOCK_ROWS); });
-  }, []);
+  async function loadPeriod(p) {
+    setLoading(true);
+    try {
+      const [json, json14] = await Promise.all([
+        fetch(`data/zidlestoly_${p}.json`).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
+        p === "7d"
+          ? fetch("data/zidlestoly_14d.json").then(r => r.ok ? r.json() : null).catch(() => null)
+          : Promise.resolve(null),
+      ]);
 
-  const now = new Date();
-  const from = new Date(now); from.setDate(from.getDate()-7);
-  const dateRange = `${from.toLocaleDateString("cs-CZ")} – ${now.toLocaleDateString("cs-CZ")}`;
+      const rows   = parseJsonRows(json);
+      const curr   = buildClients(rows);
+      setClients(curr);
+
+      const per = json.period || {};
+      if (per.since && per.until) setPeriod(`${per.since} – ${per.until}`);
+      setUpdated(`Aktualizováno ${(json.fetched_at||"").substring(0, 10)}`);
+
+      // Trend: compare 7d vs prev 7d (= 14d - 7d)
+      if (p === "7d" && json14) {
+        const rows14  = parseJsonRows(json14);
+        const prev14  = buildClients(rows14);
+        setPrevMap(buildPrevMap(curr, prev14));
+      } else {
+        setPrevMap(null);
+      }
+    } catch {
+      // Fall back to old zidlestoly.json, then to mock
+      try {
+        const json = await fetch("data/zidlestoly.json").then(r => { if (!r.ok) throw new Error(); return r.json(); });
+        const rows = parseJsonRows(json);
+        setClients(buildClients(rows));
+        const per = json.period || {};
+        if (per.since && per.until) setPeriod(`${per.since} – ${per.until}`);
+        setUpdated(`Aktualizováno ${(json.fetched_at||"").substring(0, 10)}`);
+        setPrevMap(null);
+      } catch {
+        loadFallback(MOCK_ROWS);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { loadPeriod(activePeriod); }, [activePeriod]);
 
   const filtered = useMemo(() => {
     const base = clients.filter(c => {
@@ -613,9 +792,9 @@ function Dashboard() {
   const totalBudget = clients.reduce((s,c)=>s+c.totalBudget,0);
 
   const statusBtns = [
-    { id:"all",      label:"Všichni",     count:counts.all,      cls:"bg-zinc-700 border-zinc-600 text-zinc-200",            inact:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300" },
-    { id:"critical", label:"🔴 Kritické", count:counts.critical, cls:"bg-red-500/20 border-red-500/40 text-red-400",         inact:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300" },
-    { id:"warning",  label:"🟡 Varování", count:counts.warning,  cls:"bg-amber-500/20 border-amber-500/40 text-amber-400",   inact:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300" },
+    { id:"all",      label:"Všichni",     count:counts.all,      cls:"bg-zinc-700 border-zinc-600 text-zinc-200",                inact:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300" },
+    { id:"critical", label:"🔴 Kritické", count:counts.critical, cls:"bg-red-500/20 border-red-500/40 text-red-400",             inact:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300" },
+    { id:"warning",  label:"🟡 Varování", count:counts.warning,  cls:"bg-amber-500/20 border-amber-500/40 text-amber-400",       inact:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300" },
     { id:"good",     label:"🟢 OK",       count:counts.good,     cls:"bg-emerald-500/20 border-emerald-500/40 text-emerald-400", inact:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300" },
   ];
 
@@ -633,118 +812,148 @@ function Dashboard() {
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h1 className="font-bold text-zinc-100 text-lg leading-tight">📊 Marketing Dashboard</h1>
-            <p className="text-[11px] text-zinc-500">{period || dateRange} · Posledních 30 dní · Meta Ads</p>
+            <p className="text-[11px] text-zinc-500">{period || "Načítám…"}</p>
           </div>
+
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="hidden sm:flex items-center gap-4 text-xs text-zinc-500 pr-3 border-r border-zinc-800">
+            {/* Period switcher */}
+            <div className="flex gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-0.5">
+              {PERIODS.map(pp => (
+                <button key={pp.id} onClick={() => setActivePeriod(pp.id)}
+                  className={`text-xs px-3 py-1 rounded-md transition-colors ${
+                    activePeriod === pp.id
+                      ? "bg-zinc-700 text-zinc-100 font-semibold"
+                      : "text-zinc-500 hover:text-zinc-300"
+                  }`}>
+                  {pp.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="hidden sm:flex items-center gap-4 text-xs text-zinc-500 px-3 border-x border-zinc-800">
               <span>Spend: <strong className="text-zinc-300">{spend(totalSpend)}</strong></span>
               <span>Budget/den: <strong className="text-zinc-300">{spend(totalBudget)}</strong></span>
               <span><strong className="text-zinc-300">{clients.length}</strong> klientů</span>
             </div>
+
             <button onClick={()=>setShow(!showImport)}
               className="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 transition-colors">
               {showImport?"✕ Zavřít":"📂 Import CSV"}
             </button>
-            <button onClick={()=>load(MOCK_ROWS)}
+            <button onClick={()=>loadFallback(MOCK_ROWS)}
               className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-600/30 transition-colors">
-              Demo data
+              Demo
             </button>
           </div>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-        {/* CSV Import */}
-        {showImport && (
-          <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-4 fade-in">
-            <p className="text-sm font-semibold text-zinc-300 mb-3">Import dat z CSV</p>
-            <CsvImport onImport={load} />
-          </div>
+        {loading && (
+          <div className="text-center py-8 text-zinc-500 text-sm">Načítám data…</div>
         )}
 
-        {/* Attention panel */}
-        <AttentionPanel clients={clients} />
-
-        {/* Stats summary + channel chart */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label:"Celkový spend",    value:spend(totalSpend) },
-              { label:"Celkový budget/den", value:spend(totalBudget) },
-              { label:"Kritické kampaně", value:String(counts.critical), bad:counts.critical>0 },
-              { label:"Klienti v pohodě", value:`${counts.good} / ${counts.all}` },
-            ].map(s => (
-              <div key={s.label} className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
-                <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">{s.label}</p>
-                <p className={`text-lg font-bold mt-0.5 ${s.bad?"text-red-400":"text-zinc-100"}`}>{s.value}</p>
+        {!loading && (
+          <>
+            {/* CSV Import */}
+            {showImport && (
+              <div className="rounded-xl border border-zinc-700 bg-zinc-900 p-4 fade-in">
+                <p className="text-sm font-semibold text-zinc-300 mb-3">Import dat z CSV</p>
+                <CsvImport onImport={loadFallback} />
               </div>
-            ))}
-          </div>
-          <ChannelSpendChart clients={clients} />
-        </div>
+            )}
 
-        {/* Filter bar */}
-        <div className="space-y-2">
-          {/* Row 1: search + status filter */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="relative flex-1 min-w-36 max-w-xs">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">🔍</span>
-              <input type="text" placeholder="Hledat klienta..." value={search}
-                onChange={e=>setSearch(e.target.value)}
-                className="w-full pl-7 pr-3 py-1.5 text-sm rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-zinc-500" />
-            </div>
-            <div className="flex gap-1.5 ml-auto flex-wrap">
-              {statusBtns.map(b => (
-                <button key={b.id} onClick={()=>setView(b.id)}
-                  className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${view===b.id?b.cls:b.inact}`}>
-                  {b.label} <span className="opacity-60">({b.count})</span>
-                </button>
-              ))}
-            </div>
-          </div>
+            {/* Trend notice */}
+            {prevMap && (
+              <div className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2 text-xs text-zinc-500">
+                <span className="text-zinc-400">📈</span>
+                Šipky ↑↓ ukazují změnu oproti předchozím 7 dnům (dny 8–14)
+              </div>
+            )}
 
-          {/* Row 2: channel filter + sort */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex gap-1.5 flex-wrap">
-              {channelBtns.map(b => {
-                const active = channelFilter === b.id;
-                const chCfg = b.id !== "all" ? CH[b.id] : null;
-                const activeCls = chCfg
-                  ? `${chCfg.bg} ${chCfg.border} ${chCfg.text}`
-                  : "bg-zinc-700 border-zinc-600 text-zinc-200";
-                return (
-                  <button key={b.id} onClick={()=>setChannel(b.id)}
-                    className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${active?activeCls:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300"}`}>
-                    {b.label}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="flex items-center gap-1.5 ml-auto flex-wrap">
-              <span className="text-[10px] uppercase tracking-wider text-zinc-600 font-medium">Řadit:</span>
-              {SORT_OPTIONS.map(s => (
-                <button key={s.id} onClick={()=>setSortBy(s.id)}
-                  className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${sortBy===s.id?"bg-zinc-700 border-zinc-600 text-zinc-200":"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300"}`}>
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+            {/* Attention panel */}
+            <AttentionPanel clients={clients} />
 
-        {/* Client list */}
-        {filtered.length===0
-          ? <div className="text-center py-12 text-zinc-600">Žádní klienti neodpovídají filtru.</div>
-          : <div className="space-y-3">
-              {filtered.map(c => (
-                <ClientCard key={c.id} client={c} channelFilter={channelFilter} />
-              ))}
+            {/* Stats summary + channel chart */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+              <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { label:"Celkový spend",      value:spend(totalSpend) },
+                  { label:"Celkový budget/den",  value:spend(totalBudget) },
+                  { label:"Kritické kampaně",    value:String(counts.critical), bad:counts.critical>0 },
+                  { label:"Klienti v pohodě",    value:`${counts.good} / ${counts.all}` },
+                ].map(s => (
+                  <div key={s.label} className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
+                    <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium">{s.label}</p>
+                    <p className={`text-lg font-bold mt-0.5 ${s.bad?"text-red-400":"text-zinc-100"}`}>{s.value}</p>
+                  </div>
+                ))}
+              </div>
+              <ChannelSpendChart clients={clients} />
             </div>
-        }
 
-        <footer className="text-center text-xs text-zinc-700 pt-2">
-          {updated ? `Aktualizováno: ${updated}` : ""}
-        </footer>
+            {/* Filter bar */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="relative flex-1 min-w-36 max-w-xs">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">🔍</span>
+                  <input type="text" placeholder="Hledat klienta…" value={search}
+                    onChange={e=>setSearch(e.target.value)}
+                    className="w-full pl-7 pr-3 py-1.5 text-sm rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-zinc-500" />
+                </div>
+                <div className="flex gap-1.5 ml-auto flex-wrap">
+                  {statusBtns.map(b => (
+                    <button key={b.id} onClick={()=>setView(b.id)}
+                      className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${view===b.id?b.cls:b.inact}`}>
+                      {b.label} <span className="opacity-60">({b.count})</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex gap-1.5 flex-wrap">
+                  {channelBtns.map(b => {
+                    const active = channelFilter === b.id;
+                    const chCfg = b.id !== "all" ? CH[b.id] : null;
+                    const activeCls = chCfg
+                      ? `${chCfg.bg} ${chCfg.border} ${chCfg.text}`
+                      : "bg-zinc-700 border-zinc-600 text-zinc-200";
+                    return (
+                      <button key={b.id} onClick={()=>setChannel(b.id)}
+                        className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${active?activeCls:"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300"}`}>
+                        {b.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-1.5 ml-auto flex-wrap">
+                  <span className="text-[10px] uppercase tracking-wider text-zinc-600 font-medium">Řadit:</span>
+                  {SORT_OPTIONS.map(s => (
+                    <button key={s.id} onClick={()=>setSortBy(s.id)}
+                      className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${sortBy===s.id?"bg-zinc-700 border-zinc-600 text-zinc-200":"bg-zinc-900 border-zinc-700 text-zinc-500 hover:text-zinc-300"}`}>
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Client list */}
+            {filtered.length===0
+              ? <div className="text-center py-12 text-zinc-600">Žádní klienti neodpovídají filtru.</div>
+              : <div className="space-y-3">
+                  {filtered.map(c => (
+                    <ClientCard key={c.id} client={c} channelFilter={channelFilter} prevData={prevMap} />
+                  ))}
+                </div>
+            }
+
+            <footer className="text-center text-xs text-zinc-700 pt-2">
+              {updated}
+            </footer>
+          </>
+        )}
       </main>
     </div>
   );

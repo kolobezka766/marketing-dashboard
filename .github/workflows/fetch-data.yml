@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch Zidlestoly data
+      - name: Fetch Zidlestoly data (7d / 14d / 30d)
         env:
           META_TOKEN: ${{ secrets.META_TOKEN_ZIDLESTOLY }}
           AD_ACCOUNT_ID: act_309696439805217
@@ -22,33 +22,40 @@ jobs:
           python3 - <<'PYEOF'
           import urllib.request, json, os, datetime
 
-          token = os.environ["META_TOKEN"]
+          token   = os.environ["META_TOKEN"]
           account = os.environ["AD_ACCOUNT_ID"]
-          today = datetime.date.today()
-          since = (today - datetime.timedelta(days=30)).isoformat()
-          until = today.isoformat()
+          today   = datetime.date.today()
+          fetched = datetime.datetime.utcnow().isoformat()
 
-          params = (
-              "fields=campaign_name,adset_name,ad_name,impressions,clicks,spend,ctr,cpc,actions"
-              "&level=ad"
-              "&time_range={" + '"since":"' + since + '","until":"' + until + '"}'
-              + "&limit=500"
-              + "&access_token=" + token
-          )
-          url = "https://graph.facebook.com/v21.0/" + account + "/insights?" + params
-
-          with urllib.request.urlopen(url) as r:
-              data = json.loads(r.read())
-
-          data["fetched_at"] = datetime.datetime.utcnow().isoformat()
-          data["account"] = "Zidlestoly.cz"
-          data["period"] = {"since": since, "until": until}
+          def fetch_period(days):
+              since = (today - datetime.timedelta(days=days)).isoformat()
+              until = today.isoformat()
+              params = (
+                  "fields=campaign_name,adset_name,ad_name,impressions,clicks,spend,ctr,cpc,actions"
+                  "&level=ad"
+                  "&time_range={" + '"since":"' + since + '","until":"' + until + '"}'
+                  + "&limit=500"
+                  + "&access_token=" + token
+              )
+              url = "https://graph.facebook.com/v21.0/" + account + "/insights?" + params
+              with urllib.request.urlopen(url) as r:
+                  data = json.loads(r.read())
+              data["fetched_at"] = fetched
+              data["account"]    = "Zidlestoly.cz"
+              data["period"]     = {"since": since, "until": until}
+              return data
 
           os.makedirs("data", exist_ok=True)
-          with open("data/zidlestoly.json", "w") as f:
-              json.dump(data, f, ensure_ascii=False, indent=2)
 
-          print("Fetched", len(data.get("data", [])), "ads")
+          for days, label in [(7, "7d"), (14, "14d"), (30, "30d")]:
+              d = fetch_period(days)
+              with open(f"data/zidlestoly_{label}.json", "w") as f:
+                  json.dump(d, f, ensure_ascii=False, indent=2)
+              print(f"Fetched {len(d.get('data', []))} ads ({label})")
+
+          # backward compat – keep zidlestoly.json = 30d
+          import shutil
+          shutil.copy("data/zidlestoly_30d.json", "data/zidlestoly.json")
           PYEOF
 
       - name: Commit and push data
