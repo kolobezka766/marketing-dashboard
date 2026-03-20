@@ -550,6 +550,7 @@ function Dashboard() {
   const [sortBy, setSortBy]         = useState("status");
   const [showImport, setShow]       = useState(false);
   const [updated, setUpdated]       = useState("");
+  const [period, setPeriod]         = useState("");
 
   function load(rows) {
     setClients(buildClients(rows));
@@ -557,7 +558,35 @@ function Dashboard() {
     setShow(false);
   }
 
-  useEffect(()=>{ load(MOCK_ROWS); }, []);
+  useEffect(()=>{
+    fetch("data/zidlestoly.json")
+      .then(r => r.json())
+      .then(json => {
+        const getAct = (actions, ...types) => {
+          for (const t of types) {
+            const f = (actions||[]).find(a => a.action_type === t);
+            if (f) return parseFloat(f.value) || 0;
+          }
+          return 0;
+        };
+        const rows = (json.data || []).map(ad => ({
+          client:      json.account || "Klient",
+          channel:     "meta",
+          ad_name:     ad.ad_name || ad.adset_name || "–",
+          impressions: parseFloat(ad.impressions) || 0,
+          clicks:      parseFloat(ad.clicks)      || 0,
+          leads:       getAct(ad.actions, "lead", "offsite_conversion.fb_pixel_lead", "onsite_conversion.lead_grouped"),
+          purchases:   getAct(ad.actions, "purchase", "offsite_conversion.fb_pixel_purchase"),
+          spend:       parseFloat(ad.spend)       || 0,
+          daily_budget: 0,
+        }));
+        setClients(buildClients(rows));
+        const p = json.period || {};
+        if (p.since && p.until) setPeriod(`${p.since} – ${p.until}`);
+        setUpdated(`Aktualizováno ${(json.fetched_at||"").substring(0,10)}`);
+      })
+      .catch(()=>{ load(MOCK_ROWS); });
+  }, []);
 
   const now = new Date();
   const from = new Date(now); from.setDate(from.getDate()-7);
@@ -604,7 +633,7 @@ function Dashboard() {
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h1 className="font-bold text-zinc-100 text-lg leading-tight">📊 Marketing Dashboard</h1>
-            <p className="text-[11px] text-zinc-500">{dateRange} · Posledních 7 dní</p>
+            <p className="text-[11px] text-zinc-500">{period || dateRange} · Posledních 30 dní · Meta Ads</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <div className="hidden sm:flex items-center gap-4 text-xs text-zinc-500 pr-3 border-r border-zinc-800">
