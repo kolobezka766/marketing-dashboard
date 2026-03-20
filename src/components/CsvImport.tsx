@@ -7,10 +7,12 @@ interface CsvImportProps {
   onImport: (rows: CsvRow[]) => void;
 }
 
-const CSV_TEMPLATE = `client,channel,ad_name,impressions,clicks,leads,purchases,spend
-Můj Klient,google,Název reklamy,10000,300,25,10,2500
-Můj Klient,meta,Druhá reklama,45000,1350,80,0,3200
-Můj Klient,tiktok,TikTok video,90000,2700,30,5,1800`;
+const CSV_TEMPLATE = `client,channel,ad_name,impressions,clicks,leads,purchases,spend,daily_budget
+Můj Klient,google,Název reklamy Google,10000,300,25,10,2500,400
+Můj Klient,meta,Název reklamy Meta,45000,1350,80,0,3200,500
+Můj Klient,tiktok,TikTok video,90000,2700,30,5,1800,280`;
+
+const REQUIRED_COLUMNS = ["client", "channel", "ad_name", "impressions", "clicks", "leads", "purchases", "spend", "daily_budget"];
 
 export function CsvImport({ onImport }: CsvImportProps) {
   const [dragging, setDragging] = useState(false);
@@ -27,9 +29,8 @@ export function CsvImport({ onImport }: CsvImportProps) {
           setError("Chyba při čtení CSV: " + result.errors[0].message);
           return;
         }
-        const required = ["client", "channel", "ad_name", "impressions", "clicks", "leads", "purchases", "spend"];
         const headers = result.meta.fields ?? [];
-        const missing = required.filter((r) => !headers.includes(r));
+        const missing = REQUIRED_COLUMNS.filter((r) => !headers.includes(r));
         if (missing.length > 0) {
           setError(`Chybějící sloupce: ${missing.join(", ")}`);
           return;
@@ -44,7 +45,7 @@ export function CsvImport({ onImport }: CsvImportProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "marketing_template.csv";
+    a.download = "marketing_sablona.csv";
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -62,9 +63,7 @@ export function CsvImport({ onImport }: CsvImportProps) {
         }}
         onClick={() => inputRef.current?.click()}
         className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-          dragging
-            ? "border-blue-500 bg-blue-500/10"
-            : "border-zinc-700 hover:border-zinc-500 bg-zinc-900/40"
+          dragging ? "border-blue-500 bg-blue-500/10" : "border-zinc-700 hover:border-zinc-500 bg-zinc-900/40"
         }`}
       >
         <input
@@ -80,7 +79,9 @@ export function CsvImport({ onImport }: CsvImportProps) {
         <p className="text-zinc-400 text-sm">
           <span className="text-zinc-200 font-semibold">Přetáhni CSV sem</span> nebo klikni pro výběr
         </p>
-        <p className="text-zinc-600 text-xs mt-1">Formát: client, channel, ad_name, impressions, clicks, leads, purchases, spend</p>
+        <p className="text-zinc-600 text-xs mt-1">
+          Sloupce: client · channel · ad_name · impressions · clicks · leads · purchases · spend · daily_budget
+        </p>
       </div>
 
       {error && (

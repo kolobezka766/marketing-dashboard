@@ -11,16 +11,18 @@ export interface Campaign {
   leads: number;
   purchases: number;
   spend: number;
-  // Calculated fields
+  dailyBudget: number;
+  // Calculated
   ctr: number;   // (clicks / impressions) * 100
+  cpm: number;   // (spend / impressions) * 1000
   cpl: number;   // spend / leads  (0 if no leads)
   cpp: number;   // spend / purchases  (0 if no purchases)
 }
 
 export interface ClientThresholds {
-  minCTR: number;   // below this = warning
-  maxCPL: number;   // above this = warning
-  maxCPP: number;   // above this = warning
+  minCTR: number;
+  maxCPL: number;
+  maxCPP: number;
 }
 
 export interface ChannelSummary {
@@ -30,7 +32,9 @@ export interface ChannelSummary {
   clicks: number;
   leads: number;
   purchases: number;
+  dailyBudget: number;
   ctr: number;
+  cpm: number;
   cpl: number;
   cpp: number;
   campaigns: Campaign[];
@@ -42,11 +46,12 @@ export interface Client {
   name: string;
   thresholds: ClientThresholds;
   campaigns: Campaign[];
-  // Aggregated
   totalSpend: number;
   totalLeads: number;
   totalPurchases: number;
+  totalDailyBudget: number;
   avgCTR: number;
+  avgCPM: number;
   avgCPL: number;
   avgCPP: number;
   channelSummaries: ChannelSummary[];
@@ -60,7 +65,6 @@ export interface DashboardData {
   dateRange: { from: string; to: string };
 }
 
-// For CSV import
 export interface CsvRow {
   client: string;
   channel: string;
@@ -70,4 +74,5 @@ export interface CsvRow {
   leads: string;
   purchases: string;
   spend: string;
+  daily_budget: string;
 }
