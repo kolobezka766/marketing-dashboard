@@ -4,11 +4,11 @@
       "campaign_name": "Jídelní_Sety_broad_Video_V1",
       "adset_name": "Broad_30-60_Jídelní_Sety_Video_V1",
       "ad_name": "Jídelní_Sety_V1",
-      "impressions": "185",
-      "clicks": "5",
-      "spend": "22.15",
-      "ctr": "2.702703",
-      "cpc": "4.43",
+      "impressions": "195",
+      "clicks": "7",
+      "spend": "24.04",
+      "ctr": "3.589744",
+      "cpc": "3.434286",
       "actions": [
         {
           "action_type": "omni_search",
@@ -20,11 +20,11 @@
         },
         {
           "action_type": "link_click",
-          "value": "2"
+          "value": "3"
         },
         {
           "action_type": "page_engagement",
-          "value": "33"
+          "value": "39"
         },
         {
           "action_type": "landing_page_view",
@@ -36,7 +36,7 @@
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "2"
+          "value": "5"
         },
         {
           "action_type": "post_interaction_gross",
@@ -44,11 +44,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "2"
+          "value": "5"
         },
         {
           "action_type": "view_content",
-          "value": "2"
+          "value": "5"
         },
         {
           "action_type": "onsite_conversion.post_save",
@@ -56,7 +56,7 @@
         },
         {
           "action_type": "post_engagement",
-          "value": "33"
+          "value": "39"
         },
         {
           "action_type": "offsite_search_add_meta_leads",
@@ -68,7 +68,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "2"
+          "value": "5"
         },
         {
           "action_type": "search",
@@ -76,19 +76,19 @@
         },
         {
           "action_type": "video_view",
-          "value": "30"
+          "value": "35"
         },
         {
           "action_type": "omni_view_content",
-          "value": "2"
+          "value": "5"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "2"
+          "value": "5"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Sety_broad_Video_V1",
@@ -118,7 +118,7 @@
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "11"
+          "value": "7"
         },
         {
           "action_type": "post_interaction_gross",
@@ -126,11 +126,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "11"
+          "value": "7"
         },
         {
           "action_type": "view_content",
-          "value": "11"
+          "value": "7"
         },
         {
           "action_type": "post_engagement",
@@ -142,7 +142,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "11"
+          "value": "7"
         },
         {
           "action_type": "video_view",
@@ -150,29 +150,29 @@
         },
         {
           "action_type": "omni_view_content",
-          "value": "11"
+          "value": "7"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "11"
+          "value": "7"
         },
         {
           "action_type": "post_reaction",
           "value": "1"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Sety_broad_Video_V1",
       "adset_name": "Broad_30-60_Jídelní_Sety_Video_V1",
       "ad_name": "Jídelní_Sety_V4",
-      "impressions": "843",
-      "clicks": "19",
-      "spend": "105.71",
-      "ctr": "2.253855",
-      "cpc": "5.563684",
+      "impressions": "900",
+      "clicks": "21",
+      "spend": "116.63",
+      "ctr": "2.333333",
+      "cpc": "5.55381",
       "actions": [
         {
           "action_type": "omni_search",
@@ -184,7 +184,7 @@
         },
         {
           "action_type": "link_click",
-          "value": "9"
+          "value": "10"
         },
         {
           "action_type": "omni_add_to_cart",
@@ -192,11 +192,11 @@
         },
         {
           "action_type": "page_engagement",
-          "value": "122"
+          "value": "132"
         },
         {
           "action_type": "landing_page_view",
-          "value": "7"
+          "value": "8"
         },
         {
           "action_type": "add_to_cart",
@@ -204,7 +204,7 @@
         },
         {
           "action_type": "omni_landing_page_view",
-          "value": "7"
+          "value": "8"
         },
         {
           "action_type": "onsite_web_view_content",
@@ -236,7 +236,7 @@
         },
         {
           "action_type": "post_engagement",
-          "value": "122"
+          "value": "132"
         },
         {
           "action_type": "offsite_search_add_meta_leads",
@@ -256,7 +256,7 @@
         },
         {
           "action_type": "video_view",
-          "value": "111"
+          "value": "120"
         },
         {
           "action_type": "omni_view_content",
@@ -271,18 +271,18 @@
           "value": "2"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Sety_broad_Video_V1",
       "adset_name": "Broad_30-60_Jídelní_Sety_Video_V1",
       "ad_name": "Jídelní_Sety_V3",
-      "impressions": "9875",
-      "clicks": "219",
-      "spend": "1303.52",
-      "ctr": "2.217722",
-      "cpc": "5.952146",
+      "impressions": "9797",
+      "clicks": "215",
+      "spend": "1285.71",
+      "ctr": "2.194549",
+      "cpc": "5.980047",
       "actions": [
         {
           "action_type": "omni_search",
@@ -294,7 +294,7 @@
         },
         {
           "action_type": "link_click",
-          "value": "137"
+          "value": "134"
         },
         {
           "action_type": "omni_add_to_cart",
@@ -306,11 +306,11 @@
         },
         {
           "action_type": "page_engagement",
-          "value": "1550"
+          "value": "1536"
         },
         {
           "action_type": "landing_page_view",
-          "value": "112"
+          "value": "109"
         },
         {
           "action_type": "add_to_cart",
@@ -318,11 +318,11 @@
         },
         {
           "action_type": "omni_landing_page_view",
-          "value": "112"
+          "value": "109"
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "405"
+          "value": "383"
         },
         {
           "action_type": "onsite_web_add_to_cart",
@@ -342,11 +342,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "405"
+          "value": "383"
         },
         {
           "action_type": "view_content",
-          "value": "405"
+          "value": "383"
         },
         {
           "action_type": "onsite_web_app_add_to_cart",
@@ -354,7 +354,7 @@
         },
         {
           "action_type": "post_engagement",
-          "value": "1549"
+          "value": "1535"
         },
         {
           "action_type": "offsite_search_add_meta_leads",
@@ -370,7 +370,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "405"
+          "value": "383"
         },
         {
           "action_type": "add_payment_info",
@@ -382,15 +382,15 @@
         },
         {
           "action_type": "video_view",
-          "value": "1407"
+          "value": "1396"
         },
         {
           "action_type": "omni_view_content",
-          "value": "405"
+          "value": "383"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "405"
+          "value": "383"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
@@ -409,18 +409,18 @@
           "value": "5"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Židle+kresilka_broad_Video_V1",
       "adset_name": "Broad_30-60_Jídelní_židle_Video_V1",
       "ad_name": "Jídelní_Židle_V1",
-      "impressions": "13179",
-      "clicks": "331",
-      "spend": "1700.04",
-      "ctr": "2.511571",
-      "cpc": "5.136073",
+      "impressions": "12763",
+      "clicks": "324",
+      "spend": "1648.51",
+      "ctr": "2.538588",
+      "cpc": "5.087994",
       "actions": [
         {
           "action_type": "web_in_store_purchase",
@@ -428,11 +428,11 @@
         },
         {
           "action_type": "omni_search",
-          "value": "16"
+          "value": "13"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_search",
-          "value": "16"
+          "value": "13"
         },
         {
           "action_type": "omni_purchase",
@@ -440,19 +440,19 @@
         },
         {
           "action_type": "link_click",
-          "value": "220"
+          "value": "215"
         },
         {
           "action_type": "omni_add_to_cart",
-          "value": "23"
+          "value": "20"
         },
         {
           "action_type": "omni_initiated_checkout",
-          "value": "19"
+          "value": "16"
         },
         {
           "action_type": "page_engagement",
-          "value": "1877"
+          "value": "1822"
         },
         {
           "action_type": "purchase",
@@ -460,27 +460,27 @@
         },
         {
           "action_type": "landing_page_view",
-          "value": "183"
+          "value": "179"
         },
         {
           "action_type": "add_to_cart",
-          "value": "23"
+          "value": "20"
         },
         {
           "action_type": "omni_landing_page_view",
-          "value": "183"
+          "value": "179"
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "524"
+          "value": "495"
         },
         {
           "action_type": "onsite_web_add_to_cart",
-          "value": "23"
+          "value": "20"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_payment_info",
-          "value": "6"
+          "value": "5"
         },
         {
           "action_type": "onsite_web_app_purchase",
@@ -500,11 +500,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "524"
+          "value": "495"
         },
         {
           "action_type": "view_content",
-          "value": "524"
+          "value": "495"
         },
         {
           "action_type": "onsite_conversion.post_save",
@@ -516,11 +516,11 @@
         },
         {
           "action_type": "onsite_web_app_add_to_cart",
-          "value": "23"
+          "value": "20"
         },
         {
           "action_type": "post_engagement",
-          "value": "1874"
+          "value": "1819"
         },
         {
           "action_type": "onsite_conversion.post_unlike",
@@ -528,7 +528,7 @@
         },
         {
           "action_type": "offsite_search_add_meta_leads",
-          "value": "16"
+          "value": "13"
         },
         {
           "action_type": "onsite_conversion.post_net_like",
@@ -536,7 +536,7 @@
         },
         {
           "action_type": "onsite_web_initiate_checkout",
-          "value": "19"
+          "value": "16"
         },
         {
           "action_type": "onsite_conversion.post_net_save",
@@ -544,7 +544,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "524"
+          "value": "495"
         },
         {
           "action_type": "onsite_web_purchase",
@@ -552,27 +552,27 @@
         },
         {
           "action_type": "add_payment_info",
-          "value": "6"
+          "value": "5"
         },
         {
           "action_type": "search",
-          "value": "16"
+          "value": "13"
         },
         {
           "action_type": "video_view",
-          "value": "1641"
+          "value": "1591"
         },
         {
           "action_type": "omni_view_content",
-          "value": "524"
+          "value": "495"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "524"
+          "value": "495"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
-          "value": "23"
+          "value": "20"
         },
         {
           "action_type": "post_reaction",
@@ -580,25 +580,25 @@
         },
         {
           "action_type": "offsite_conversion.fb_pixel_initiate_checkout",
-          "value": "19"
+          "value": "16"
         },
         {
           "action_type": "initiate_checkout",
-          "value": "19"
+          "value": "16"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Židle+kresilka_broad_Video_V1",
       "adset_name": "Broad_30-60_Jídelní_židle_Video_V1",
       "ad_name": "Jídelní_Židle_V2",
-      "impressions": "487",
+      "impressions": "451",
       "clicks": "8",
-      "spend": "69.11",
-      "ctr": "1.64271",
-      "cpc": "8.63875",
+      "spend": "64.55",
+      "ctr": "1.773836",
+      "cpc": "8.06875",
       "actions": [
         {
           "action_type": "link_click",
@@ -606,7 +606,7 @@
         },
         {
           "action_type": "page_engagement",
-          "value": "78"
+          "value": "76"
         },
         {
           "action_type": "landing_page_view",
@@ -630,7 +630,7 @@
         },
         {
           "action_type": "post_engagement",
-          "value": "78"
+          "value": "76"
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
@@ -638,7 +638,7 @@
         },
         {
           "action_type": "video_view",
-          "value": "75"
+          "value": "73"
         },
         {
           "action_type": "omni_view_content",
@@ -649,8 +649,8 @@
           "value": "8"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Židle+kresilka_broad_Video_V1",
@@ -712,7 +712,7 @@
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "160"
+          "value": "159"
         },
         {
           "action_type": "onsite_web_add_to_cart",
@@ -740,11 +740,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "160"
+          "value": "159"
         },
         {
           "action_type": "view_content",
-          "value": "160"
+          "value": "159"
         },
         {
           "action_type": "onsite_conversion.post_save",
@@ -780,7 +780,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "160"
+          "value": "159"
         },
         {
           "action_type": "onsite_web_purchase",
@@ -800,11 +800,11 @@
         },
         {
           "action_type": "omni_view_content",
-          "value": "160"
+          "value": "159"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "160"
+          "value": "159"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
@@ -823,8 +823,8 @@
           "value": "8"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Židle+kresilka_broad_Video_V1",
@@ -921,18 +921,18 @@
           "value": "1"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Židle+kresilka_broad_Video_V1",
       "adset_name": "Broad_30-60_Jídelní_kresilka_Video_V1",
       "ad_name": "Jídelní_Křesílka_V2",
-      "impressions": "16775",
-      "clicks": "621",
-      "spend": "1978.27",
-      "ctr": "3.701937",
-      "cpc": "3.18562",
+      "impressions": "16431",
+      "clicks": "606",
+      "spend": "1929.69",
+      "ctr": "3.68815",
+      "cpc": "3.184307",
       "actions": [
         {
           "action_type": "offsite_complete_registration_add_meta_leads",
@@ -956,7 +956,7 @@
         },
         {
           "action_type": "link_click",
-          "value": "342"
+          "value": "333"
         },
         {
           "action_type": "omni_complete_registration",
@@ -972,7 +972,7 @@
         },
         {
           "action_type": "page_engagement",
-          "value": "3359"
+          "value": "3295"
         },
         {
           "action_type": "purchase",
@@ -980,7 +980,7 @@
         },
         {
           "action_type": "landing_page_view",
-          "value": "360"
+          "value": "351"
         },
         {
           "action_type": "add_to_cart",
@@ -988,11 +988,11 @@
         },
         {
           "action_type": "omni_landing_page_view",
-          "value": "360"
+          "value": "351"
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "607"
+          "value": "595"
         },
         {
           "action_type": "complete_registration",
@@ -1016,7 +1016,7 @@
         },
         {
           "action_type": "post_interaction_gross",
-          "value": "26"
+          "value": "25"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_purchase",
@@ -1024,7 +1024,7 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "607"
+          "value": "595"
         },
         {
           "action_type": "post",
@@ -1036,7 +1036,7 @@
         },
         {
           "action_type": "view_content",
-          "value": "607"
+          "value": "595"
         },
         {
           "action_type": "onsite_conversion.post_save",
@@ -1052,7 +1052,7 @@
         },
         {
           "action_type": "post_engagement",
-          "value": "3349"
+          "value": "3285"
         },
         {
           "action_type": "onsite_conversion.post_unlike",
@@ -1064,7 +1064,7 @@
         },
         {
           "action_type": "onsite_conversion.post_net_like",
-          "value": "15"
+          "value": "14"
         },
         {
           "action_type": "onsite_web_initiate_checkout",
@@ -1076,7 +1076,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "607"
+          "value": "595"
         },
         {
           "action_type": "onsite_web_purchase",
@@ -1092,15 +1092,15 @@
         },
         {
           "action_type": "video_view",
-          "value": "2981"
+          "value": "2927"
         },
         {
           "action_type": "omni_view_content",
-          "value": "607"
+          "value": "595"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "607"
+          "value": "595"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
@@ -1108,7 +1108,7 @@
         },
         {
           "action_type": "post_reaction",
-          "value": "19"
+          "value": "18"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_complete_registration",
@@ -1123,8 +1123,8 @@
           "value": "22"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Jídelní_Židle+kresilka_broad_Video_V1",
@@ -1166,7 +1166,7 @@
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "28"
+          "value": "24"
         },
         {
           "action_type": "onsite_web_add_to_cart",
@@ -1182,11 +1182,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "28"
+          "value": "24"
         },
         {
           "action_type": "view_content",
-          "value": "28"
+          "value": "24"
         },
         {
           "action_type": "onsite_conversion.post_save",
@@ -1214,7 +1214,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "28"
+          "value": "24"
         },
         {
           "action_type": "add_payment_info",
@@ -1226,11 +1226,11 @@
         },
         {
           "action_type": "omni_view_content",
-          "value": "28"
+          "value": "24"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "28"
+          "value": "24"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
@@ -1249,18 +1249,18 @@
           "value": "3"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Výprodeje",
       "adset_name": "Broad_výprodej_green, aida, manta",
       "ad_name": "Akce-výprodej-green",
-      "impressions": "43409",
-      "clicks": "326",
-      "spend": "5318.55",
-      "ctr": "0.750996",
-      "cpc": "16.314571",
+      "impressions": "42923",
+      "clicks": "317",
+      "spend": "5267.4",
+      "ctr": "0.738532",
+      "cpc": "16.616404",
       "actions": [
         {
           "action_type": "web_in_store_purchase",
@@ -1280,11 +1280,11 @@
         },
         {
           "action_type": "link_click",
-          "value": "282"
+          "value": "273"
         },
         {
           "action_type": "omni_add_to_cart",
-          "value": "35"
+          "value": "33"
         },
         {
           "action_type": "omni_initiated_checkout",
@@ -1292,7 +1292,7 @@
         },
         {
           "action_type": "page_engagement",
-          "value": "290"
+          "value": "281"
         },
         {
           "action_type": "purchase",
@@ -1300,23 +1300,23 @@
         },
         {
           "action_type": "landing_page_view",
-          "value": "212"
+          "value": "206"
         },
         {
           "action_type": "add_to_cart",
-          "value": "35"
+          "value": "33"
         },
         {
           "action_type": "omni_landing_page_view",
-          "value": "212"
+          "value": "206"
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "673"
+          "value": "660"
         },
         {
           "action_type": "onsite_web_add_to_cart",
-          "value": "35"
+          "value": "33"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_payment_info",
@@ -1340,11 +1340,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "673"
+          "value": "660"
         },
         {
           "action_type": "view_content",
-          "value": "673"
+          "value": "660"
         },
         {
           "action_type": "onsite_conversion.post_save",
@@ -1356,11 +1356,11 @@
         },
         {
           "action_type": "onsite_web_app_add_to_cart",
-          "value": "35"
+          "value": "33"
         },
         {
           "action_type": "post_engagement",
-          "value": "289"
+          "value": "280"
         },
         {
           "action_type": "onsite_conversion.post_unlike",
@@ -1384,7 +1384,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "673"
+          "value": "660"
         },
         {
           "action_type": "onsite_web_purchase",
@@ -1400,15 +1400,15 @@
         },
         {
           "action_type": "omni_view_content",
-          "value": "673"
+          "value": "660"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "673"
+          "value": "660"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
-          "value": "35"
+          "value": "33"
         },
         {
           "action_type": "post_reaction",
@@ -1423,18 +1423,18 @@
           "value": "35"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Výprodeje",
       "adset_name": "Broad_Akce_Leden",
       "ad_name": "Akce_leden",
-      "impressions": "35346",
-      "clicks": "417",
-      "spend": "4401.65",
-      "ctr": "1.179766",
-      "cpc": "10.555516",
+      "impressions": "33270",
+      "clicks": "395",
+      "spend": "4154.49",
+      "ctr": "1.187256",
+      "cpc": "10.517696",
       "actions": [
         {
           "action_type": "offsite_complete_registration_add_meta_leads",
@@ -1446,11 +1446,11 @@
         },
         {
           "action_type": "omni_search",
-          "value": "16"
+          "value": "11"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_search",
-          "value": "16"
+          "value": "11"
         },
         {
           "action_type": "omni_purchase",
@@ -1458,7 +1458,7 @@
         },
         {
           "action_type": "link_click",
-          "value": "368"
+          "value": "351"
         },
         {
           "action_type": "omni_complete_registration",
@@ -1474,7 +1474,7 @@
         },
         {
           "action_type": "page_engagement",
-          "value": "376"
+          "value": "358"
         },
         {
           "action_type": "purchase",
@@ -1482,7 +1482,7 @@
         },
         {
           "action_type": "landing_page_view",
-          "value": "264"
+          "value": "252"
         },
         {
           "action_type": "add_to_cart",
@@ -1490,11 +1490,11 @@
         },
         {
           "action_type": "omni_landing_page_view",
-          "value": "264"
+          "value": "252"
         },
         {
           "action_type": "onsite_web_view_content",
-          "value": "938"
+          "value": "916"
         },
         {
           "action_type": "complete_registration",
@@ -1514,7 +1514,7 @@
         },
         {
           "action_type": "post_interaction_gross",
-          "value": "8"
+          "value": "7"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_purchase",
@@ -1522,15 +1522,11 @@
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "938"
-        },
-        {
-          "action_type": "post",
-          "value": "1"
+          "value": "916"
         },
         {
           "action_type": "view_content",
-          "value": "938"
+          "value": "916"
         },
         {
           "action_type": "web_app_in_store_purchase",
@@ -1542,11 +1538,11 @@
         },
         {
           "action_type": "post_engagement",
-          "value": "376"
+          "value": "358"
         },
         {
           "action_type": "offsite_search_add_meta_leads",
-          "value": "16"
+          "value": "11"
         },
         {
           "action_type": "onsite_conversion.post_net_like",
@@ -1558,7 +1554,7 @@
         },
         {
           "action_type": "offsite_content_view_add_meta_leads",
-          "value": "938"
+          "value": "916"
         },
         {
           "action_type": "onsite_web_purchase",
@@ -1570,15 +1566,15 @@
         },
         {
           "action_type": "search",
-          "value": "16"
+          "value": "11"
         },
         {
           "action_type": "omni_view_content",
-          "value": "938"
+          "value": "916"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "938"
+          "value": "916"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
@@ -1601,90 +1597,94 @@
           "value": "26"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     },
     {
       "campaign_name": "Výprodeje",
       "adset_name": "Broad_AKCE_NARDI_Brezen",
       "ad_name": "Nardi_kod",
-      "impressions": "21458",
-      "clicks": "249",
-      "spend": "2313.75",
-      "ctr": "1.160406",
-      "cpc": "9.292169",
+      "impressions": "24359",
+      "clicks": "276",
+      "spend": "2559.92",
+      "ctr": "1.133051",
+      "cpc": "9.275072",
       "actions": [
         {
           "action_type": "web_in_store_purchase",
-          "value": "2"
+          "value": "4"
         },
         {
           "action_type": "omni_search",
-          "value": "4"
+          "value": "5"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_search",
-          "value": "4"
+          "value": "5"
         },
         {
           "action_type": "omni_purchase",
-          "value": "2"
-        },
-        {
-          "action_type": "link_click",
-          "value": "220"
-        },
-        {
-          "action_type": "omni_add_to_cart",
-          "value": "11"
-        },
-        {
-          "action_type": "omni_initiated_checkout",
-          "value": "11"
-        },
-        {
-          "action_type": "page_engagement",
-          "value": "224"
-        },
-        {
-          "action_type": "purchase",
-          "value": "2"
-        },
-        {
-          "action_type": "landing_page_view",
-          "value": "182"
-        },
-        {
-          "action_type": "add_to_cart",
-          "value": "11"
-        },
-        {
-          "action_type": "omni_landing_page_view",
-          "value": "182"
-        },
-        {
-          "action_type": "onsite_web_view_content",
-          "value": "229"
-        },
-        {
-          "action_type": "onsite_web_add_to_cart",
-          "value": "11"
-        },
-        {
-          "action_type": "onsite_web_app_purchase",
-          "value": "2"
-        },
-        {
-          "action_type": "post_interaction_gross",
           "value": "4"
         },
         {
+          "action_type": "link_click",
+          "value": "241"
+        },
+        {
+          "action_type": "omni_add_to_cart",
+          "value": "12"
+        },
+        {
+          "action_type": "omni_initiated_checkout",
+          "value": "12"
+        },
+        {
+          "action_type": "page_engagement",
+          "value": "247"
+        },
+        {
+          "action_type": "purchase",
+          "value": "4"
+        },
+        {
+          "action_type": "landing_page_view",
+          "value": "194"
+        },
+        {
+          "action_type": "add_to_cart",
+          "value": "12"
+        },
+        {
+          "action_type": "omni_landing_page_view",
+          "value": "194"
+        },
+        {
+          "action_type": "onsite_web_view_content",
+          "value": "301"
+        },
+        {
+          "action_type": "onsite_web_add_to_cart",
+          "value": "12"
+        },
+        {
+          "action_type": "offsite_conversion.fb_pixel_add_payment_info",
+          "value": "1"
+        },
+        {
+          "action_type": "onsite_web_app_purchase",
+          "value": "4"
+        },
+        {
+          "action_type": "post_interaction_gross",
+          "value": "6"
+        },
+        {
           "action_type": "offsite_conversion.fb_pixel_purchase",
-          "value": "2"
+          "value": "4"
         },
         {
           "action_type": "onsite_web_app_view_content",
-          "value": "229"
+          "value": "301"
         },
         {
           "action_type": "post",
@@ -1692,71 +1692,83 @@
         },
         {
           "action_type": "view_content",
-          "value": "229"
+          "value": "301"
+        },
+        {
+          "action_type": "onsite_conversion.post_save",
+          "value": "1"
         },
         {
           "action_type": "web_app_in_store_purchase",
-          "value": "2"
+          "value": "4"
         },
         {
           "action_type": "onsite_web_app_add_to_cart",
-          "value": "11"
+          "value": "12"
         },
         {
           "action_type": "post_engagement",
-          "value": "224"
+          "value": "247"
         },
         {
           "action_type": "offsite_search_add_meta_leads",
-          "value": "4"
+          "value": "5"
         },
         {
           "action_type": "onsite_conversion.post_net_like",
-          "value": "3"
-        },
-        {
-          "action_type": "onsite_web_initiate_checkout",
-          "value": "11"
-        },
-        {
-          "action_type": "offsite_content_view_add_meta_leads",
-          "value": "229"
-        },
-        {
-          "action_type": "onsite_web_purchase",
-          "value": "2"
-        },
-        {
-          "action_type": "search",
           "value": "4"
         },
         {
+          "action_type": "onsite_web_initiate_checkout",
+          "value": "12"
+        },
+        {
+          "action_type": "onsite_conversion.post_net_save",
+          "value": "1"
+        },
+        {
+          "action_type": "offsite_content_view_add_meta_leads",
+          "value": "301"
+        },
+        {
+          "action_type": "onsite_web_purchase",
+          "value": "4"
+        },
+        {
+          "action_type": "add_payment_info",
+          "value": "1"
+        },
+        {
+          "action_type": "search",
+          "value": "5"
+        },
+        {
           "action_type": "omni_view_content",
-          "value": "229"
+          "value": "301"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_view_content",
-          "value": "229"
+          "value": "301"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_add_to_cart",
-          "value": "11"
+          "value": "12"
         },
         {
           "action_type": "post_reaction",
-          "value": "3"
+          "value": "4"
         },
         {
           "action_type": "offsite_conversion.fb_pixel_initiate_checkout",
-          "value": "11"
+          "value": "12"
         },
         {
           "action_type": "initiate_checkout",
-          "value": "11"
+          "value": "12"
         }
       ],
-      "date_start": "2026-02-25",
-      "date_stop": "2026-03-27"
+      "date_start": "2026-02-26",
+      "date_stop": "2026-03-28"
     }
   ],
   "paging": {
@@ -1765,10 +1777,10 @@
       "after": "MTIZD"
     }
   },
-  "fetched_at": "2026-03-27T06:11:03.551401",
+  "fetched_at": "2026-03-28T05:53:54.370801",
   "account": "Zidlestoly.cz",
   "period": {
-    "since": "2026-02-25",
-    "until": "2026-03-27"
+    "since": "2026-02-26",
+    "until": "2026-03-28"
   }
 }
